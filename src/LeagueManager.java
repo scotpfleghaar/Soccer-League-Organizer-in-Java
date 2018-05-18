@@ -1,6 +1,8 @@
 import com.teamtreehouse.model.Player;
 import com.teamtreehouse.model.Players;
 
+import java.util.TreeMap;
+
 public class LeagueManager {
 
     public static void main(String[] args) {
@@ -24,6 +26,9 @@ public class LeagueManager {
         //  Sort teams Alphabetically
         //  Display teams
         //}
+        public void displayTeams(Players[] members){
+            TreeMap sortPlayers = new TreeMap();
+        }
 
         //Function selectTeam () {
         //  displayTeams();
