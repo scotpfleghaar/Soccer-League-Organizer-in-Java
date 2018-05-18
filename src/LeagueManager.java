@@ -1,15 +1,41 @@
 import com.teamtreehouse.model.Player;
 import com.teamtreehouse.model.Players;
+import com.teamtreehouse.model.LeagueHelper;
 
-import java.util.TreeMap;
+import java.util.Arrays;
+import java.util.ArrayList;
+
 
 public class LeagueManager {
 
     public static void main(String[] args) {
         Player[] players = Players.load();
         System.out.printf("There are currently %d registered players.%n", players.length);
-        // Your code here!
-        System.out.println(players);
+        // Your code here
+        LeagueHelper leagueHelper = new LeagueHelper(new ArrayList<>(Arrays.asList(players)));
+        leagueHelper.run();
+
+
+        for (Player player : players) {
+            System.out.printf("%s %s is %d inches ", player.getFirstName(), player.getLastName(), player.getHeightInInches());
+            if (player.isPreviousExperience()){
+                System.out.printf("and has played before%n");
+            } else {
+                System.out.printf("hasn't played before%n");
+            }
+        }
+        for (Player player : players) {
+            player.compareTo(player);
+            System.out.printf("%s %s is %d inches ", player.getFirstName(), player.getLastName(), player.getHeightInInches());
+            if (player.isPreviousExperience()){
+                System.out.printf("and has played before%n");
+            } else {
+                System.out.printf("hasn't played before%n");
+            }
+        }
+        System.out.println("Hi");
+
+
 
         // While the Organizer has not selected Exit from the Menu
             //Create Team: Present an menu item that allows the organizer to create a new team, so that they can build the season.
@@ -26,9 +52,7 @@ public class LeagueManager {
         //  Sort teams Alphabetically
         //  Display teams
         //}
-        public void displayTeams(Players[] members){
-            TreeMap sortPlayers = new TreeMap();
-        }
+
 
         //Function selectTeam () {
         //  displayTeams();
