@@ -21,12 +21,13 @@ public class LeagueHelper {
         this.menu.put("build", "Add Players to a Team");
         this.menu.put("remove", "Remove Player from Team");
         this.menu.put("reports", "View Reports");
-        this.menu.put("leagueBalance", "League Balance Report");
+        this.menu.put("league", "League Balance Report");
+        this.menu.put("print", "Print Team Roster");
         this.menu.put("quit", "Quit the LeagueBuilder");
     }
 
     private String promptAction() throws IOException {
-        System.out.printf("There are currently %d registered players.%n", players.size());
+        System.out.printf("%n%nThere are currently %d registered players not assigned to a team%n", players.size());
         for (Map.Entry<String, String> option : this.menu.entrySet()){
             System.out.printf("%s - %s %n", option.getKey(), option.getValue());
         }
@@ -42,10 +43,15 @@ public class LeagueHelper {
                 choice = promptAction();
                 switch(choice){
                     case "create":
-                        Team team = promptNewTeam();
-                        addTeam(team);
-                        System.out.printf("Team Created! %s is coaching the %s%n", team.getCoach(), team.getTeamName());
-                        System.out.printf("There are %d teams%n%n", teams.size());
+                        if(teams.size() > players.size()) {
+                            System.out.printf("Cannot Create more teams than there are players.%n");
+                        } else {
+                            Team team = promptNewTeam();
+                            addTeam(team);
+                            System.out.printf("Team Created! %s is coaching the %s%n", team.getCoach(), team.getTeamName());
+                            System.out.printf("There are %d teams%n%n", teams.size());
+                        }
+
                         break;
                     case "add":
                         Player player = promptNewPlayer();
@@ -53,30 +59,63 @@ public class LeagueHelper {
                         System.out.printf("%s added! %n%n", player.getFirstName());
                         break;
                     case "build":
-                        int teamIndex =  promptTeam();
-                        addPlayersToTeam(teams.get(teamIndex));
-                        System.out.printf("You have choosen %s%n", teams.get(teamIndex).teamName);
+                        if(teams.size() == 0){
+                            System.out.printf("There are not teams, Please create a team%n");
+                        } else {
+                            int teamIndex =  promptTeam();
+                            addPlayersToTeam(teams.get(teamIndex));
+                        }
+
                         break;
                     case "remove":
-                        System.out.println("Removeing Player...");
+                        if(teams.size() == 0){
+                            System.out.printf("There are not teams, Please create a team%n");
+                        } else {
+                            int teamIndex = promptTeam();
+                            if(teams.get(teamIndex).players == null){
+                                System.out.printf("There are no players in this team, please build the team");
+                            } else {
+                                removePlayersFromTeam(teams.get(teamIndex));
+                            }
+                        }
                         break;
                     case "reports":
-                        System.out.println("reports...");
+                        if(teams.size() == 0){
+                            System.out.printf("There are not teams, Please create a team%n");
+                        } else {
+                            int teamIndex = promptTeam();
+                            if(teams.get(teamIndex).players == null){
+                                System.out.printf("There are no players in this team, please build the team");
+                            } else {
+                                sortPlayerByHeight(teams.get(teamIndex));
+                            }
+                        }
                         break;
-                    case "leagueBalance":
+                    case "league":
                         System.out.println("leagueBalance....");
+
+                        if(teams.size() == 0){
+                            System.out.printf("There are not teams, Please create a team%n");
+                        } else {
+                            leagueBalanceReport(this.teams);
+                        }
+
+
+
+                        break;
+                    case "print":
+                        if(teams.size() == 0){
+                            System.out.printf("There are not teams, Please create a team%n");
+                        } else {
+                            int teamIndex = promptTeam();
+                            if(teams.get(teamIndex).players == null){
+                                System.out.printf("There are no players in this team, please build the team");
+                            } else {
+                                showPlayers(teams.get(teamIndex));
+                            }
+                        }
                         break;
                     case "quit":
-                        System.out.println("Thanks!");
-                        break;
-                    case "choose":
-//                        String artist = promptArtist();
-//                        Song artistSong = promptSongForArtist(artist);
-//                        mSongQueue.add(artistSong);
-//                        System.out.printf("You choose: %s %n", artistSong);
-                        break;
-                    case "play":
-                        //playNext();
                         break;
                     default:
                         System.out.printf("Uknown Choice: '%s'%n%n", choice);
@@ -137,9 +176,10 @@ public class LeagueHelper {
     private int promptTeam() throws IOException{
         System.out.printf("%n%nAvailable Teams:%n");
         List<String> localTeams = new ArrayList<>();
+        sortTeams(this.teams);
         if (this.teams.size() > 0){
             for(Team team : this.teams){
-                localTeams.add(team.teamName);
+                localTeams.add(team.teamName + " coached by " + team.coach);
             }
             int index = promptForIndex(localTeams);
             return index;
@@ -153,8 +193,15 @@ public class LeagueHelper {
         System.out.printf("%n%nAvailable Players:%n");
         List<String> localPlayer = new ArrayList<>();
         if (this.players.size() > 0){
+            sortPlayers(this.players);
             for(Player player : this.players){
-                localPlayer.add(player.getFirstName());
+                String experience;
+                if (player.isPreviousExperience()){
+                    experience = "is experienced.";
+                } else {
+                    experience = "is not experienced.";
+                }
+                localPlayer.add(player.getFirstName() + " " + player.getLastName() + ", Height: " + player.getHeightInInches() + " and " + experience);
             }
             int index = promptForIndex(localPlayer);
             return index;
@@ -164,27 +211,222 @@ public class LeagueHelper {
         }
     }
 
-    public void addPlayersToTeam(Team team) throws IOException{
-        if(team == null) {
-            System.out.println("Sorry there are teams. Use create from the menu to add some");
-        } else {
-            ArrayList<Player> players;
-            if (team.getPlayers() == null){
-                players = new ArrayList<>();
-            } else {
-                players = team.getPlayers();
+    public void sortPlayers(ArrayList players) {
+        for (int i = 0; i < players.size(); i++) {
+            for (int j = 0; j < players.size(); j++) {
+                Collections.sort(players, new Comparator() {
+                    public int compare(Object o1, Object o2) {
+                        Player p1 = (Player) o1;
+                        Player p2 = (Player) o2;
+                        int res = p1.getLastName().compareToIgnoreCase(p2.getLastName());
+                        if (res != 0)
+                            return res;
+                        return p1.getFirstName().compareToIgnoreCase(p2.getFirstName());
+                    }
+                });
             }
-            while (players.size() < 12) {
-                Player player = this.players.get(promptPlayers());
-                this.players.add(player);
-                System.out.printf("Added %s to %s's Team", player.getFirstName(), team.teamName);
-            }
-            System.out.printf("%s's Team is full with %d players", team.coach, this.players.size());
 
         }
     }
 
+    public void sortPlayersByHeight(ArrayList players) {
+        for (int i = 0; i < players.size(); i++) {
+            for (int j = 0; j < players.size(); j++) {
+                Collections.sort(players, new Comparator() {
+                    public int compare(Object o1, Object o2) {
+                        Player p1 = (Player) o1;
+                        Player p2 = (Player) o2;
+                        int res = p1.getHeightInInches() > p2.getHeightInInches() ? +1 : p1.getHeightInInches() < p2.getHeightInInches() ? -1 : 0;
+                        if (res != 0)
+                            return res;
+                        return p1.getLastName().compareToIgnoreCase(p2.getLastName());
+                    }
+                });
+            }
 
+        }
+    }
 
+    public void sortTeams(ArrayList teams) {
+        for (int i = 0; i < teams.size(); i++) {
+            for (int j = 0; j < teams.size(); j++) {
+                Collections.sort(teams, new Comparator() {
+                    public int compare(Object o1, Object o2) {
+                        Team p1 = (Team) o1;
+                        Team p2 = (Team) o2;
+                        int res = p1.teamName.compareToIgnoreCase(p2.teamName);
+                        if (res != 0)
+                            return res;
+                        return p1.coach.compareToIgnoreCase(p2.coach);
+                    }
+                });
+            }
 
+        }
+    }
+
+    public void addPlayersToTeam(Team team) throws IOException{
+        if(team == null) {
+            System.out.println("Sorry there are no teams. Use create from the menu to add some");
+        } else {
+            ArrayList<Player> players;
+            if (team.players == null){
+                players = new ArrayList<>();
+            } else {
+                players = team.players;
+            }
+            while (players.size() < 11) {
+                Player player = this.players.get(promptPlayers());
+                players.add(player);
+                this.players.remove(player);
+                System.out.printf("Added %s to the %s%n", player.getFirstName(), team.teamName);
+                System.out.printf("There are now %s players in the %s%n", players.size(), team.teamName);
+
+            }
+            team.setPlayers(players);
+            System.out.printf("%s's Team is full with %d players%n", team.coach, players.size());
+        }
+    }
+
+    public int promptTeamPlayers(Team team) throws IOException{
+        System.out.printf("%n%nAvailable Players:%n");
+        List<String> localPlayer = new ArrayList<>();
+        if (team.players.size() > 0){
+            sortPlayers(team.players);
+            for(Player player : team.players){
+                String experience;
+                if (player.isPreviousExperience()){
+                    experience = "is experienced.";
+                } else {
+                    experience = "is not experienced.";
+                }
+                localPlayer.add(player.getFirstName() + " " + player.getLastName() + ", Height: " + player.getHeightInInches() + " and " + experience);
+            }
+            int index = promptForIndex(localPlayer);
+            return index;
+        } else {
+            System.out.printf("There are no Players%n");
+            return -1;
+        }
+    }
+
+    public void removePlayersFromTeam(Team team) throws IOException{
+        if(team == null) {
+            System.out.println("Sorry there are no teams. Use create from the menu to add some");
+        } else {
+            ArrayList<Player> players;
+            if (team.players == null){
+                System.out.printf("There are not players on this team");
+            } else {
+                players = team.players;
+                boolean keepRemovingPlayers = true;
+                do {
+                    Player player = players.get(promptTeamPlayers(team));
+                    players.remove(player);
+                    this.players.add(player);
+                    System.out.printf("Removed %s From the %s%n", player.getFirstName(), team.teamName);
+                    System.out.printf("There are now %s players in the %s%n", players.size(), team.teamName);
+                    System.out.print("Would you like to remove another player? (Y/N)  ");
+                    String removePlayer = this.reader.readLine();
+                    if(removePlayer == "Y"){
+                        keepRemovingPlayers = true;
+                    } else {
+                        keepRemovingPlayers = false;
+                    }
+                } while (keepRemovingPlayers);
+                team.setPlayers(players);
+                System.out.printf("%s's Team is full with %d players%n", team.coach, players.size());
+            }
+
+        }
+    }
+
+    public void showPlayers(Team team) throws IOException{
+        boolean returnToMenu = false;
+        do {
+            System.out.printf("%nPlayers on %s coached by %s%n", team.teamName, team.coach);
+            if (team.players.size() > 0){
+                sortPlayers(team.players);
+                for(Player player : team.players){
+                    String experience;
+                    if (player.isPreviousExperience()){
+                        experience = "is experienced.";
+                    } else {
+                        experience = "is not experienced.";
+                    }
+                    System.out.printf("%s %s, is %d inches tall and %s%n", player.getFirstName(), player.getLastName(), player.getHeightInInches(), experience);
+                }
+            } else {
+                System.out.printf("There are no Players%n");
+            }
+            System.out.printf("%nThere are %s players in team %s%n", team.players.size(), team.teamName);
+            System.out.print("Press Enter to return to Menu.");
+            this.reader.readLine();
+            returnToMenu = false;
+        } while (returnToMenu);
+    }
+
+    public void sortPlayerByHeight(Team team) throws IOException{
+        boolean returnToMenu = false;
+        do {
+            System.out.printf("%nPlayer Height report for players on %s coached by %s%n", team.teamName, team.coach);
+            if (team.players.size() > 0){
+                Map<Integer,List<Player>> map = new HashMap<Integer,List<Player>>();
+
+                for (Player player : team.players) {
+                    int cid = player.getHeightInInches();
+
+                    List<Player> list = map.get(cid);
+
+                    if (list == null) {
+                        list = new ArrayList<Player>();
+                        map.put(cid,list);
+                    }
+
+                    list.add(player);
+                }
+                for (Map.Entry<Integer, List<Player>> entry : map.entrySet()) {
+                    System.out.println("There are " +  entry.getValue().size() + " players with a height of " + entry.getKey() + " inches.");
+                }
+            } else {
+                System.out.printf("There are no Players%n");
+            }
+            System.out.printf("%nThere are %s players in team %s%n", team.players.size(), team.teamName);
+            System.out.print("Press Enter to return to Menu.");
+            this.reader.readLine();
+            returnToMenu = false;
+        } while (returnToMenu);
+    }
+
+    public float teamBalancePercent(Team team){
+        double experiencedPlayers = 0;
+        double noneExperiencedPlayers = 0;
+        double total = team.players.size();
+        for(Player player : team.players){
+            if (player.isPreviousExperience()){
+                experiencedPlayers += 1;
+            } else {
+                noneExperiencedPlayers += 1;
+            }
+        }
+        float percentExperianced = (float) ((experiencedPlayers / total) * 100);
+        return percentExperianced;
+    }
+
+    public void leagueBalanceReport(ArrayList<Team> teams) throws IOException{
+        System.out.printf("%n%nThis is the League Balance Report%n");
+        boolean returnToMenu = false;
+        do {
+            for(Team team : teams){
+                if(team.players == null){
+                    System.out.printf("There are no players in the %s%n", team.teamName);
+                } else {
+                    System.out.printf("Of the %d players in the %s coached by %s, %.2f%% are experienced%n", team.players.size(), team.teamName, team.coach, teamBalancePercent(team));
+                }
+            }
+            System.out.print("Press Enter to return to Menu.");
+            this.reader.readLine();
+            returnToMenu = false;
+        } while (returnToMenu);
+    }
 }
