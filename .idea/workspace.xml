@@ -4,6 +4,8 @@
     <list default="true" id="c84b2717-a321-4ee8-9d7f-09c72cd6b16f" name="Default" comment="">
       <change afterPath="$PROJECT_DIR$/src/com/teamtreehouse/model/LeagueHelper.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/com/teamtreehouse/model/Team.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Soccer-League-Organizer-in-Java/com/teamtreehouse/model/LeagueHelper.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Soccer-League-Organizer-in-Java/com/teamtreehouse/model/LeagueHelper.class" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,8 +32,8 @@
       <file leaf-file-name="LeagueHelper.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/teamtreehouse/model/LeagueHelper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="116" column="30" lean-forward="true" selection-start-line="116" selection-start-column="30" selection-end-line="116" selection-end-column="30" />
+            <state relative-caret-position="227">
+              <caret line="176" column="94" selection-start-line="176" selection-start-column="94" selection-end-line="176" selection-end-column="94" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#5911#5912#0" expanded="true" />
@@ -101,6 +103,7 @@
       <find>promptPlayers</find>
       <find>showPlayers</find>
       <find>compareTo</find>
+      <find>promptNewTeam</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -250,17 +253,17 @@
       <window_info anchor="right" id="Capture Analysis" />
       <window_info anchor="bottom" id="Event Log" sideWeight="0.503125" side_tool="true" weight="0.4184492" />
       <window_info anchor="right" id="Maven Projects" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.496875" weight="0.4184492" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.496875" visible="true" weight="0.4184492" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Terminal" />
       <window_info id="Capture Tool" />
       <window_info id="Designer" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17578125" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" />
       <window_info anchor="right" id="Theme Preview" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.49765626" visible="true" weight="0.39973262" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49765626" weight="0.37165776" />
       <window_info id="Favorites" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -275,21 +278,18 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="12" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/teamtreehouse/model/LeagueHelper.java</url>
+          <line>168</line>
+          <properties />
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="17" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/teamtreehouse/model/Team.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="18" column="26" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="26" />
-          <folding>
-            <element signature="e#422#423#0" expanded="true" />
-            <element signature="e#460#461#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/teamtreehouse/model/Players.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-275">
@@ -330,10 +330,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/teamtreehouse/model/Team.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="18" column="26" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="26" />
+          <folding>
+            <element signature="e#422#423#0" expanded="true" />
+            <element signature="e#460#461#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/teamtreehouse/model/LeagueHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="116" column="30" lean-forward="true" selection-start-line="116" selection-start-column="30" selection-end-line="116" selection-end-column="30" />
+        <state relative-caret-position="227">
+          <caret line="176" column="94" selection-start-line="176" selection-start-column="94" selection-end-line="176" selection-end-column="94" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#5911#5912#0" expanded="true" />

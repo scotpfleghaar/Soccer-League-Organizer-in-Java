@@ -10,12 +10,16 @@ public class LeagueHelper {
     public ArrayList<Team> teams;
     private Map<String, String> menu;
     private BufferedReader reader;
+    private Set<String> coaches;
+    private Set<String> teamNames;
 
     public LeagueHelper(ArrayList<Player> players) {
         this.players = players;
         this.teams = new ArrayList<Team>();
         this.reader = new BufferedReader(new InputStreamReader(System.in));
         this.menu = new HashMap<String, String>();
+        this.coaches = new HashSet();
+        this.teamNames = new HashSet();
         this.menu.put("create", "Create Team");
         this.menu.put("add", "Add Player to the Queue");
         this.menu.put("build", "Add Players to a Team");
@@ -153,10 +157,29 @@ public class LeagueHelper {
     }
 
     private Team promptNewTeam() throws IOException{
-        System.out.print("Team Name:  ");
-        String teamName = this.reader.readLine();
-        System.out.print("Coach Name:  ");
-        String coachName = this.reader.readLine();
+
+        String teamName;
+        String coachName;
+        while(true) {
+            System.out.print("Team Name:  ");
+            teamName = this.reader.readLine();
+            if (this.teamNames.contains(teamName)) {
+                System.out.printf("The %s is already a team. Please use a different name%n", teamName);
+            } else {
+                this.teamNames.add(teamName);
+                break;
+            }
+        }
+        while(true) {
+            System.out.print("Coach Name:  ");
+            coachName = this.reader.readLine();
+            if (this.coaches.contains(coachName)) {
+                System.out.printf("%s is already coaching a team. Please use a different coach%n", coachName );
+            } else {
+                this.coaches.add(coachName);
+                break;
+            }
+        }
         return new Team(teamName, coachName);
     }
 
@@ -387,6 +410,10 @@ public class LeagueHelper {
                 }
                 for (Map.Entry<Integer, List<Player>> entry : map.entrySet()) {
                     System.out.println("There are " +  entry.getValue().size() + " players with a height of " + entry.getKey() + " inches.");
+                    for (Player player : entry.getValue())
+                    {
+                        System.out.printf("%s %s%n", player.getFirstName(), player.getLastName());
+                    }
                 }
             } else {
                 System.out.printf("There are no Players%n");
