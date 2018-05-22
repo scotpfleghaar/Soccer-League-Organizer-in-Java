@@ -140,10 +140,28 @@ public class LeagueHelper {
     }
 
     private Player promptNewPlayer() throws IOException{
-        System.out.print("Players First Name:  ");
-        String firstName = this.reader.readLine();
-        System.out.print("Players Last Name:  ");
-        String lastName = this.reader.readLine();
+        Set<String> playerFirstName = new HashSet<String>();
+        Set<String> playersLastNames = new HashSet<String>();
+        for(Player player : players){
+            playerFirstName.add(player.getFirstName());
+            playersLastNames.add(player.getLastName());
+        }
+        String firstName;
+        String lastName;
+        while(true) {
+            System.out.print("Players First Name:  ");
+            firstName = this.reader.readLine();
+            System.out.print("Players Last Name:  ");
+            lastName = this.reader.readLine();
+
+            if (playerFirstName.contains(firstName) && playersLastNames.contains(lastName)) {
+                System.out.printf("%s %s is already registered. Please create a new player%n", firstName, lastName);
+            } else {
+                break;
+            }
+        }
+
+
         System.out.print("Players Height(inches):  ");
         int height = Integer.parseInt(this.reader.readLine());
         System.out.print("Has the player played before? (Y/N):  ");
@@ -408,12 +426,22 @@ public class LeagueHelper {
 
                     list.add(player);
                 }
+
+                int maxHeight = Integer.MAX_VALUE;
+                int minHeight = 0;
                 for (Map.Entry<Integer, List<Player>> entry : map.entrySet()) {
-                    System.out.println("There are " +  entry.getValue().size() + " players with a height of " + entry.getKey() + " inches.");
-                    for (Player player : entry.getValue())
-                    {
-                        System.out.printf("%s %s%n", player.getFirstName(), player.getLastName());
+                    if(maxHeight > entry.getKey()){
+                        maxHeight = entry.getKey();
                     }
+                    if(minHeight < entry.getKey()){
+                        minHeight = entry.getKey();
+                    }
+                }
+
+                System.out.printf("There are %s players with a heights of %d-%d inches.%n", team.players.size(), maxHeight, minHeight);
+                for (Player player : players)
+                {
+                    System.out.printf("%s %s%n", player.getFirstName(), player.getLastName());
                 }
             } else {
                 System.out.printf("There are no Players%n");
